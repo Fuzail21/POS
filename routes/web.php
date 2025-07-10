@@ -28,14 +28,6 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\DiscountRuleController;
 
-// Store
-use App\Http\Controllers\Frontend\StoreController;
-use App\Http\Controllers\Frontend\CartController;
-use App\Http\Controllers\Frontend\CustomerAuth\AuthenticatedSessionController as CustomerAuthenticatedSessionController; // For customer login
-use App\Http\Controllers\Frontend\CustomerAuth\RegisteredUserController as CustomerRegisteredUserController; // For customer registration
-use App\Http\Controllers\Frontend\CheckoutController; // New controller for checkout process
-use App\Http\Controllers\Frontend\CustomerProfileController; 
-
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -292,52 +284,5 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::put('discount-rules/{id}', [DiscountRuleController::class, 'update'])->name('discount_rules.update');
     Route::delete('discount-rules/{id}', [DiscountRuleController::class, 'destroy'])->name('discount_rules.destroy');
 });
-
-
-// // Store
-//     Route::prefix('store')->group(function () {
-//         Route::get('/', [StoreController::class, 'landing'])->name('store.landing');
-//         Route::get('/shop', [StoreController::class, 'shop'])->name('store.shop');
-//         Route::get('/product/{id}', [StoreController::class, 'product'])->name('store.product');
-//         Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-//         Route::get('/cart', [CartController::class, 'view'])->name('cart.view');
-//         Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-//         Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
-//     });
-
-
-// Store Frontend
-Route::prefix('store')->group(function () {
-    Route::get('/', [StoreController::class, 'landing'])->name('store.landing');
-    Route::get('/shop', [StoreController::class, 'shop'])->name('store.shop');
-    Route::get('/product/{id}', [StoreController::class, 'product'])->name('store.product');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-    Route::get('/cart', [CartController::class, 'view'])->name('cart.view');
-    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
-
-    // Customer Authentication for Store
-    Route::get('/login', [CustomerAuthenticatedSessionController::class, 'create'])->name('customer.login');
-    Route::post('/login', [CustomerAuthenticatedSessionController::class, 'store']);
-    Route::post('/logout', [CustomerAuthenticatedSessionController::class, 'destroy'])->name('customer.logout');
-
-    Route::get('/register', [CustomerRegisteredUserController::class, 'create'])->name('customer.register');
-    Route::post('/register', [CustomerRegisteredUserController::class, 'store']);
-
-    // Protected routes for authenticated customers
-    Route::middleware('auth:customer')->group(function () {
-        Route::get('/checkout', [CheckoutController::class, 'index'])->name('store.checkout');
-        Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('store.checkout.process');
-
-        // Customer Profile
-        Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('customer.profile.edit');
-        Route::patch('/profile', [CustomerProfileController::class, 'update'])->name('customer.profile.update');
-        Route::delete('/profile', [CustomerProfileController::class, 'destroy'])->name('customer.profile.destroy');
-    });
-});
-
-
-
-
 
 require __DIR__.'/auth.php';
